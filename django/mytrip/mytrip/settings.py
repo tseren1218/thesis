@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-(rgramt=fuy949q=5r2n)dthwbnsejkv2_=b17vg0_up_-dva4
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['.vercel.app']
+ALLOWED_HOSTS = ['.vercel.app','now.sh','127.0.0.1','localhost']
 
 NEOMODEL_NEO4J_BOLT_URL = 'neo4j+s://neo4j:Z5Wa6WGGEnU8j6QAm2KmHrWWxInvQFnC_UY4kCZdG30@42ec5f8d.databases.neo4j.io:7687'
 
@@ -130,6 +130,8 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
 STATIC_URL = 'static/'
+STATICFILES_DIR = os.path.join(BASE_DIR, 'static')
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles_build', 'static')
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
