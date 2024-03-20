@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+
+{% block title %}Home{% endblock %}
+{% load static %}
+{% block content %}
+<div class="landing-page-container">
+    <div class="landing-page-text-container">
+        <h1 class='main-title'>Хүсэлдээ нийцсэн аяллын маршруттай болъё.</h1>
+        <button class="btn btn-success landing-page" data-target='#section1'>Аялал үүсгэх</button>
+    </div>
+    <img src="{% static 'core/images/home_photo.svg' %}" class="home-photo" alt="home-photo">
+</div>
+{% endblock %}

@@ -1,0 +1,37 @@
+:root {
+    --bs-font-sans-serif: 'Mulish', sans-serif !important;
+}
+
+ .navbar-logo {
+    width: 70%;
+    margin-left: 10%;
+ }
+
+ .landing-page-container {
+    padding: 5% 0% 5% 10%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 5%;
+ }
+
+ .main-title {
+    font-size: 3.8vw;
+    font-weight: bolder;
+    margin-bottom: 5%;
+ }
+
+ .home-photo {
+    width: 55%;
+ }
+
+ .btn.btn-success.landing-page {
+    width: 30%;
+    font-size: 1vw;
+ }
+
+.navbar-expand-lg.navbar-light.bg-white {
+    -webkit-box-shadow: 1px 6px 5px -3px rgba(0,0,0,0.32);
+-moz-box-shadow: 1px 6px 5px -3px rgba(0,0,0,0.32);
+box-shadow: 1px 6px 5px -3px rgba(0,0,0,0.32);
+}
