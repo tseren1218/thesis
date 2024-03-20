@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-(rgramt=fuy949q=5r2n)dthwbnsejkv2_=b17vg0_up_-dva4
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['.vercel.app']
 
 NEOMODEL_NEO4J_BOLT_URL = 'neo4j+s://neo4j:Z5Wa6WGGEnU8j6QAm2KmHrWWxInvQFnC_UY4kCZdG30@42ec5f8d.databases.neo4j.io:7687'
 
