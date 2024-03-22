@@ -48,7 +48,7 @@ INSTALLED_APPS = [
     'django_neomodel',
     'core',
     'mytrip',
-    'storages'
+    # 'storages'
 ]
 
 MIDDLEWARE = [
