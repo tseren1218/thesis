@@ -29,6 +29,11 @@ class Soum(DjangoNode):
     def __str__(self):
         return self.name
     
+    
+class ConnectedLocations(StructuredRel):
+    distance = FloatProperty()
+    travel_time = IntegerProperty()
+
 
 class Location(DjangoNode):
     uid = UniqueIdProperty(primary_key=True)
@@ -40,11 +45,12 @@ class Location(DjangoNode):
     images = ArrayProperty()
     latitude = FloatProperty()
     longitude = FloatProperty()
-    nearest_location = Relationship('Location', 'CONNECTS_TO')
+    connected_locations = Relationship('Location', 'CONNECTS_TO', model=ConnectedLocations)
     class Meta:
         app_label = "mytrip"
     
     def __str__(self):
         return self.name
+
     
 

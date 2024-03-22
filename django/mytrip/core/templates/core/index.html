@@ -4,6 +4,15 @@
 {% load static %}
 {% block content %}
 <div class="landing-page-container">
+    <div id="success-message-overlay">
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-success" role="alert">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+    </div>
     <div class="landing-page-text-container">
         <h1 class='main-title'>Хүсэлдээ нийцсэн аяллын маршруттай болъё.</h1>
         <button class="btn btn-success landing-page" data-target='#section1'>Аялал үүсгэх</button>
