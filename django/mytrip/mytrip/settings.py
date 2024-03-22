@@ -86,12 +86,13 @@ WSGI_APPLICATION = 'mytrip.wsgi.application'
 
 DATABASES = {
     'default': {
-        'NAME': 'mytrip.db',
-        'ENGINE': 'django.db.backends.sqlite3',
-        'USER': '',
-        'PASSWORD': '',
-        'PORT': '',
-    },
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'mytrip',
+        'USER': 'mytrip_user',
+        'PASSWORD': 'kPOZqzrFqVSKCVHko8Mb9vxkJ5uFGPiT',
+        'HOST': 'dpg-cnuj9763e1ms73cp15ig-a.singapore-postgres.render.com',
+        'PORT': '5432',       
+    }
 }
 
 
