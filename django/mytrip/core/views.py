@@ -1,6 +1,5 @@
 from datetime import timezone
 from django.shortcuts import redirect, render
-from django.views import generic
 from .models import *
 from .forms import *
 from django.contrib import messages

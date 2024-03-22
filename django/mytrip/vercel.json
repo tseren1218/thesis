@@ -12,6 +12,9 @@
         "config": {
           "distDir": "staticfiles_build"
         }
+      },
+      {
+        "trailingSlash": false
       }
     ],
     "routes": [

@@ -24,16 +24,16 @@
               <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                   <li class="nav-item">
-                    <a href="/" class="nav-link active">Нүүр</a>
+                    <a href="{% url 'core:index' %}" class="nav-link active">Нүүр</a>
                   </li>
                   <li class="nav-item">
-                   <a href="/locations" class="nav-link active">Аяллын байршлууд</a>
+                   <a href="{% url 'core:locations' %}" class="nav-link active">Аяллын байршлууд</a>
                   </li>
                   <li class="nav-item">
-                    <a href="/about" class="nav-link active">Бидний тухай</a>
+                    <a href="" class="nav-link active">Бидний тухай</a>
                   </li>
                   <li class="nav-item">
-                    <a href="/new_location" class="nav-link active">Аяллын байршил нэмэх</a>
+                    <a href="{% url 'core:new_location' %}" class="nav-link active">Аяллын байршил нэмэх</a>
                   </li>
                   <li class="nav-item">
                     <button class="btn btn-outline-success landing-page" data-target='#section1'>Аялал үүсгэх</button>
