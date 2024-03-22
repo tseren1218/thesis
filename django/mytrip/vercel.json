@@ -12,11 +12,9 @@
         "config": {
           "distDir": "staticfiles_build"
         }
-      },
-      {
-        "trailingSlash": false
       }
     ],
+    "trailingSlash": false,
     "routes": [
       {
         "src": "/static/(.*)",
