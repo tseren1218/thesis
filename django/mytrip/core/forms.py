@@ -26,7 +26,7 @@ class LocationForm(forms.ModelForm):
         ('other', 'Бусад'),
     ]
     category = forms.ChoiceField(choices=CATEGORY_CHOICES)
-    images = forms.FileField()
+    images = forms.CharField()
     description = forms.CharField(widget=forms.Textarea)
     
 class ConnectedLocationsForm(forms.Form):
@@ -37,3 +37,6 @@ class ConnectedLocationsForm(forms.Form):
     connected_location_input = forms.ChoiceField(choices=CONNECTED_LOCATION_CHOICES)
     distance = forms.FloatField()
     travel_time = forms.FloatField()
+
+class ImageUploadForm(forms.Form):
+    image = forms.ImageField

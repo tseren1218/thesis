@@ -43,7 +43,7 @@ class Location(DjangoNode):
     type = StringProperty()
     category = ArrayProperty()
     description = StringProperty()
-    images = ArrayProperty()
+    images = None
     latitude = FloatProperty()
     longitude = FloatProperty()
     connected_locations = Relationship('Location', 'CONNECTS_TO', model=ConnectedLocations)

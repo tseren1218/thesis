@@ -53,5 +53,3 @@ class LocationForm(forms.ModelForm):
 
     images = forms.CharField(widget=forms.Textarea)
 
-# class ConnectedLocationsForm(forms.Form):
-#     print(Location.nodes.all())
