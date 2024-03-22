@@ -1,5 +1,7 @@
 from django import forms
-from .models import *
+
+from core.models import Location
+
 
 class LocationForm(forms.ModelForm):
     class Meta:
@@ -24,35 +26,14 @@ class LocationForm(forms.ModelForm):
         ('other', 'Бусад'),
     ]
     category = forms.ChoiceField(choices=CATEGORY_CHOICES)
-
-    # PROVINCE_CHOICES = [
-    #     ('Ulaanbaatar', 'Улаанбаатар'),
-    #     ('Bayan-Ulgii', 'Баян-Өлгий'),
-    #     ('Khovd', 'Ховд'),
-    #     ('Uvs', 'Увс'),
-    #     ('Zavkhan', 'Завхан'),
-    #     ('Gobi-Altai', 'Говь-Алтай'),
-    #     ('Arkhangai', 'Архангай'),
-    #     ('Uvurkhangai', 'Өвөрхангай'),
-    #     ('Khuvsgul', 'Хөвсгөл'),
-    #     ('Bulgan', 'Булган'),
-    #     ('Umnugovi', 'Өмнөговь'),
-    #     ('Dundgovi', 'Дундговь'),
-    #     ('Govisumber', 'Говьсүмбэр'),
-    #     ('Tuv', 'Төв'),
-    #     ('Selenge', 'Сэлэнгэ'),
-    #     ('Darkhan-Uul', 'Дархан-Уул'),
-    #     ('Orkhon', 'Орхон'),
-    #     ('Dornogovi', 'Дорноговь'),
-    #     ('Sukhbaatar', 'Сүхбаатар'),
-    #     ('Khentii', 'Хэнтий'),
-    #     ('Dornod', 'Дорнод'),
-    #     ('Bayankhongor', 'Баянхонгор'),
-    # ]
-    # province = forms.ChoiceField(choices=PROVINCE_CHOICES)
-
-    images = forms.CharField(widget=forms.Textarea)
-
-# class ConnectedLocationsForm(forms.Form):
-#     Location.nodes.all()
-    # connected_location = forms.ChoiceField(choices=Location.nodes.all())
+    images = forms.FileField()
+    description = forms.CharField(widget=forms.Textarea)
+    
+class ConnectedLocationsForm(forms.Form):
+    connected_locations = Location.nodes.all()
+    CONNECTED_LOCATION_CHOICES = []
+    for connected_location in connected_locations:
+        CONNECTED_LOCATION_CHOICES.append((connected_location, connected_location))
+    connected_location_input = forms.ChoiceField(choices=CONNECTED_LOCATION_CHOICES)
+    distance = forms.FloatField()
+    travel_time = forms.FloatField()

@@ -2,6 +2,7 @@ from django.db import models
 # Create your models here.
 from django_neomodel import DjangoNode
 from neomodel import *
+from django import forms
 
 class Province(DjangoNode):
     uid = UniqueIdProperty(primary_key=True)
@@ -51,6 +52,3 @@ class Location(DjangoNode):
     
     def __str__(self):
         return self.name
-
-    
-

@@ -1,6 +1,6 @@
 from django.contrib import admin as dj_admin
 from django_neomodel import admin as neo_admin
-from .forms import *
+from .custom_forms import *
 from .models import *
 # Register your models here.
 

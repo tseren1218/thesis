@@ -5,7 +5,8 @@
 {% block content %}
     <form method="post">
         {% csrf_token %}
-        {{ form.as_p }}
+        {{ location_form.as_p }}
+        {{ connected_locations_form.as_p }}
         <button type="submit">Submit</button>
     </form>
 {% endblock %}
