@@ -1,0 +1,7 @@
+<label for="soum">Soum</label>
+<select class="custom-select mb-4 form-select" name="soum">
+    {% for soum in soums %}
+        <option value="{{soum.uid}}">{{soum.name}}</option>
+    {% endfor %}
+</select>
+

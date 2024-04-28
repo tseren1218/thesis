@@ -1,0 +1,8 @@
+#connected_location_candidates {
+    height: 200px;
+    overflow-y: auto;
+    border: 1px solid;
+    border-radius: 1%;
+    border-color: gainsboro;
+    padding: 1%;
+}

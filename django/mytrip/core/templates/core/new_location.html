@@ -3,10 +3,63 @@
 {% block title %}New Location{% endblock %}
 {% load static %}
 {% block content %}
-    <form method="post">
+<link rel="stylesheet" href="{% static 'core/new_location.css' %}">
+   <div class="container-sm mt-5 mb-5">
+    <h1>Аяллын байршил нэмэх</h1>
+    <form method="post" enctype="multipart/form-data">
         {% csrf_token %}
-        {{ location_form.as_p }}
-        {{ connected_locations_form.as_p }}
-        <button type="submit">Submit</button>
+        
+        <!-- location -->
+        <div class="form-group">
+            {{location_form.as_p}}
+        </div>
+
+
+        <!-- aimag -->
+        <label for="province">Province</label>
+        <select class="custom-select mb-4 form-select" name="province"
+        hx-get="{% url 'core:soums' %}"
+        hx-trigger="change"
+        hx-target="#soums">
+            {% for province in provinces %}
+                <option value="{{province.uid}}">{{province.name}}</option>
+            {% endfor %}
+        </select>
+        
+        <!-- soum -->
+        <div id="soums">
+            {% include 'core/partials/soums.html' %}
+        </div>
+
+        <br>
+        <hr>
+        <h3>Холбогдсон байршлууд</h3>
+        <div id="connected_location_candidates" class="overflow-auto">
+            <ul class="list-unstyled">
+                {% for connected_location_candidate in connected_location_candidates %}
+                <li>
+                    <input type="checkbox" name="checkbox_option" value={{connected_location_candidate.uid}} 
+                    hx-post="{% url 'core:connected_locations_properties' %}"
+                    hx-trigger="change"
+                    hx-target="#connected_locations_properties"
+                    >
+                    <label for="checkbox_option">{{connected_location_candidate.name}}</label>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <div id="connected_locations_properties">
+            {% include 'core/partials/connected_locations_properties.html' %}
+        </div>
+
+
+        <button type="submit" class="btn btn-success">Бүртгэх</button>
+
+
+        <!-- <div id="connected-locations-property"></div> -->
+
     </form>
+   </div>
 {% endblock %}
+

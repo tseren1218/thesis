@@ -1,0 +1,17 @@
+
+<br>
+<h4>Холбогдсон байршлуудын мэдээлэл</h4>
+{% if connected_locations %}
+    {% for connected_location in connected_locations %}
+    <br>
+        <h5>{{connected_location.name}}-д хүрэх мэдээлэл</h5>
+        <label for="distance/{{ connected_location.uid }}">Хүрэх зай (км)</label>
+        <input type="number" step="0.1" class="form-control" name="distance/{{ connected_location.uid }}" value="0">
+        <label for="travel_time/{{ connected_location.uid }}">Туулах хугацаа (минут)</label>
+        <input type="number" class="form-control" name="travel_time/{{ connected_location.uid }}" value="0">
+        
+        <br>
+    {% endfor %}
+{% else %}
+<p><i>Холбогдсон байршил сонгоно уу</i></p>
+{% endif %}

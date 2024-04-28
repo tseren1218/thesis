@@ -1,0 +1,139 @@
+{% load my_tags %}
+    {% if trips_data and all_prices %}
+
+    <div class="card mb-3 mt-3 p-0 bg-light">
+        <div class="card-body p-2 d-flex justify-content-between align-content-center">
+            <p class="ps-3 pt-0 pe-0 pb-0 m-0 align-content-center">Аяллын байршлын төрлүүд</p>
+            <div class="btn-group" role="group">
+                <strong class="btn"><span class="text-success">Энгийн</span></strong>
+                <strong class="btn"><span class="text-primary">Явган</span></strong>
+                <strong class="btn"><span class="text-danger">Экстрем</span></strong>
+            </div>
+        </div>
+    </div>
+
+    <div class="accordion mt-3" id="accordion">
+
+        {% for locations, relationships in trips_data %}
+            <div class="card mb-2">
+                <div class="card-header" id="heading{{forloop.counter}}">
+                        <button class="btn btn-success" type="button" data-toggle="collapse" data-target="#collapse{{forloop.counter}}" aria-expanded="false" aria-controls="collapse{{forloop.counter}}">
+                            Аялал {{forloop.counter}}
+                        </button>
+                        <div class="btn-group" role="group">
+                            {% for location in locations %}
+                                {% if location.name != "Улаанбаатар (0 цэг)" %}
+                                    <strong class="btn"><span class="text-{% if location.type == 'Энгийн' %}success{% elif location.type == 'Явган' %}primary{% else %}danger{% endif %}">{{location.name}}</span></strong>
+                                    <div class="border-right"></div>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+
+                </div>
+
+                <div id="collapse{{forloop.counter}}" class="collapse" aria-labelledby="heading{{forloop.counter}}" data-parent="#accordion">
+                    <div class="card-body">
+                        {% for location in locations %}
+                            {% if location.name != "Улаанбаатар (0 цэг)" %}
+                                <div class="card mb-3 border-2 border-{% if location.type == 'Энгийн' %}success{% elif location.type == 'Явган' %}primary{% else %}danger{% endif %}">
+                                    <div class="row g-0">
+                                        <div class="col-md-4">
+                                            <img src="{{location.image_url}}" alt="{{location.name}}" class="img-fluid rounded-start" style="width: 100%; height: 100%; object-fit: cover;">
+                                        </div>
+                                        <div class="col-md-8">
+                                            <div class="card-body h-100">
+                                                <div class="d-flex flex-column justify-content-between h-100">
+                                                    <h5 class="card-title">{{forloop.counter}}. {{location.name}}</h5>
+                                                    <div class="card-text text-truncate-container">
+                                                        <p class="card-text mb-0">{{location.description}}</p>
+                                                    </div>
+                                                    <p class="mb-0"><span class="fw-bold">Байршил: </span> <span class="text-secondary">{{location|get_parent_province}} аймаг, {{location|get_parent_soum}} сум</span></p>
+                                                    <p class="mb-0"><span class="fw-bold">Категори: </span> 
+                                                        {% for category in location.category %}
+                                                            <span class="text-primary">{{category}}</span>
+                                                        {% endfor %}
+                                                    </p>
+                                                    
+                                                </div>
+                                            </div>
+                                        </div>                                 
+                                    </div>
+                                </div>
+                                {% if relationships|get_relationship_distance:forloop.counter0 %}
+                                    <div class="card mb-3 bg-light">
+                                        <div class="card-body">
+                                            <p class="card-text"><i class="fas fa-car"></i> Замын урт: {{relationships|get_relationship_distance:forloop.counter0}} км</p>
+                                            <p class="card-text"><i class="bi bi-clock-fill"></i> Туулах хугацаа: {{relationships|get_relationship_travel_time:forloop.counter0}} минут</p>
+                                        </div>
+                                    </div>
+                                {% endif %}
+                            {% else %}
+                                <div class="card mb-3">
+                                    <div class="card-body">
+                                        <h5 class="card-title">1. Эхлэх цэг: Улаанбаатар</h5>
+                                    </div>
+                                </div>
+                                <div class="card mb-3 bg-light">
+                                    <div class="card-body">
+                                        <p class="card-text"><i class="fas fa-car"></i> Замын урт: {{relationships|get_relationship_distance:forloop.counter0}} км</p>
+                                        <p class="card-text"><i class="bi bi-clock-fill"></i> Туулах хугацаа: {{relationships|get_relationship_travel_time:forloop.counter0}} минут</p>
+                                    </div>
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+                        <div class="card mb-3 bg-light">
+                            <div class="card-header">
+                                <h5 class="card-title text-center">Аяллын хураангуй</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="card-text">
+                                    <p><strong>Аяллын нийт байршил:</strong> {{locations|length_real}}</p>
+                                    <p><strong>Аяллын нийт урт:</strong> {{relationships|sum_relationship_distance}} км <i>/нэг талдаа/</i></p>
+                                    <p><strong>Аяллын нийт хугацаа:</strong> ~{{relationships|calculate_trip_duration}} өдөр <i>/нэг талдаа/</i></p>
+                                    <p><strong>Аяллын нийт өртөг:</strong></p>
+                                    <ul>
+                                        <li><strong>Шатахуунд:</strong> ~{{relationships|calculate_total_gas_cost:vehicle}}₮</li>
+                                        <li><strong>Аяллын байршлуудын тасалбарт:</strong> {{locations|calculate_total_ticket_cost}}₮ <i>/нэг хүний/</i></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>  
+                </div>
+            </div>
+
+           
+    
+        {% endfor %}
+
+    </div>
+    {% endif %}
+
+{% if alert_message %}
+    {% if "Уучлаарай" in alert_message %}
+
+            <div class="alert alert-warning alert-dismissible fade show mt-3">
+                {{alert_message}}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+
+    {% else %}  
+    <div class="text-center">
+        <i id="guide" class="guide">{{alert_message}}</i>
+    </div>
+    {% endif %}
+{% endif %}
+
+    <style>
+        .guide.htmx-request {
+            display: none;
+        }
+        .text-truncate-container p {
+            -webkit-line-clamp: 3;
+            display: -webkit-box;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+    </style>
+
+

@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+
+{% block title %}New Location{% endblock %}
+{% load static %}
+{% block content %}
+
+        {% if connected_locations %}
+
+            <!-- <form id="connection_properties_form" hx-post="{% url 'core:new_connected_locations_properties' %}" hx-trigger="submit"> -->
+            <form method="post">
+                {% csrf_token %}
+                <h1>{{ location.name }}-тай холбоотой байршлуудын мэдээлэл </h1>
+                {% for connected_location in connected_locations %}
+                    <h5><b>{{ connected_location.name }}</b>-д хүрэх мэдээлэл</h5>
+                    <input type="number" name="distance/{{ connected_location.uid }}" value="0">
+                    <label for="distance/{{ connected_location.uid }}">Хүрэх зай(км)</label>
+                    <input type="number" name="travel_times/{{ connected_location.uid }}" value="0">
+                    <label for="travel_times/{{ connected_location.uid }}">Туулах хугацаа(минут)</label>
+                {% endfor %}
+                <input type="hidden" name="main_location_uid" value="{{location.uid}}"><br>
+                <button type="submit">Бүртгэх</button>
+            </form>             
+
+        {% else %}
+            <h1>Байршилтай холбогдоогүй байна</h1>
+        {% endif %}
+        
+    
+{% endblock %}
+

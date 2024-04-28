@@ -140,13 +140,16 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles_build', 'static')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-AWS_ACCESS_KEY_ID = 'AKIAX4FBZQK22LAX5L7I '
-AWS_SECRET_ACCESS_KEY = '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'
+AWS_ACCESS_KEY_ID = 'AKIAX4FBZQK2RDGOQME7 '
+AWS_SECRET_ACCESS_KEY = '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'
 AWS_STORAGE_BUCKET_NAME = 'mytrip-media'
-AWS_S3_SIGNATURE_NAME = 's3v4',
-AWS_S3_REGION_NAME = 'ap-northeast-2'
-AWS_S3_FILE_OVERWRITE = False
-AWS_DEFAULT_ACL =  None
-AWS_S3_VERITY = True
-DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 AWS_QUERYSTRING_AUTH = False
+# AWS_S3_SIGNATURE_NAME = 's3v4',
+# AWS_S3_REGION_NAME = 'ap-northeast-2'
+# AWS_S3_FILE_OVERWRITE = False
+# AWS_DEFAULT_ACL =  None
+# AWS_S3_VERITY = True
+DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
