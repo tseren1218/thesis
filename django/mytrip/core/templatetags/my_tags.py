@@ -7,6 +7,10 @@ def length_real(array):
     return len(array) - 1
 
 @register.filter
+def total_distance(array, index):
+    return array[index]
+
+@register.filter
 def get_relationship_distance(array, index):
     try:
         return array[index].distance
@@ -47,7 +51,7 @@ def calculate_trip_cost(relationships_array, locations_array, vehicle):
 def calculate_total_ticket_cost(locations_array):
     total_ticket_cost = 0
     for item in locations_array:
-        total_ticket_cost = item.price
+        total_ticket_cost += item.price
     return round(total_ticket_cost)
 
 @register.filter
@@ -71,7 +75,6 @@ def get_parent_province(location):
 def get_parent_province(location):
     return location.soum.single().province.single()
 
-
 def calculate_fuel_consumption(vehicle):
     fuel_consumption = 0
     if(vehicle == 'prius'):
@@ -81,4 +84,6 @@ def calculate_fuel_consumption(vehicle):
     else:
         fuel_consumption = 14
     return fuel_consumption
+
+
 

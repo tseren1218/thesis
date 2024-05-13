@@ -2,6 +2,8 @@ from .models import *
 import boto3
 from django.conf import settings
 from neomodel import db
+from .templatetags import my_tags
+from django.core.paginator import Paginator
 
 class MyUtils:
 
@@ -25,16 +27,72 @@ class MyUtils:
         s3.upload_fileobj(file, bucket_name, key)
         return key
 
+    def paginate(data, page_size, page_number):
+        paginator = Paginator(data, page_size)
+        return paginator.get_page(page_number)
 
-    def paginate_nodes(page_number, page_size):
-        skip = (page_number - 1) * page_size
-        cypher_query = "MATCH (n:Location) RETURN n SKIP $skip LIMIT $limit"
-        parameters = {
-            "skip": skip,
-            "limit": 6,
-        }
-        results = db.cypher_query(cypher_query, params=parameters)
-        return results[0]
+    def query_trip(request):
+        trip_type = request.POST.get('type')
+        categories = request.POST.getlist('category_checkbox')
+        duration = request.POST.get('duration')
+        budget = int(request.POST.get('budget'))
+        vehicle = request.POST.get('vehicle')
+        fuel_consumption = my_tags.calculate_fuel_consumption(vehicle=vehicle)
+        gas_price = 2390
+        start_point = "Улаанбаатар (0 цэг)"
+
+        if (trip_type and categories and duration and budget and vehicle):
+            
+            # Undsen query
+            cypher_query = """MATCH path = (n:Location{name:"Улаанбаатар (0 цэг)"})-[:CONNECTS_TO*1..3]-(m:Location) 
+                              WITH 
+                              reduce(totalDistance = 0, rel in relationships(path) | totalDistance + rel.distance) AS totalDistance,
+                              path,reduce(totalTicketPrice = 0, node in nodes(path) | totalTicketPrice + node.price) AS pathTotalTicketPrice,
+                              reduce(totalDistance = 0, rel in relationships(path) | totalDistance + rel.distance) / 100 * $fuel_consumption * $gas_price * 2 AS pathTotalGasPrice,
+                              [node in nodes(path) WHERE node.type = $trip_type | node] AS trip_type, 
+                              """ 
+            
+            # Category tus buriig oruulah
+            for index, category in enumerate(categories):
+                # Hamgiin suuliin category bish bol taslaltai bichigdene
+                if index != len(categories)-1:
+                    print(f"category{index}: ", category, "\n")
+                    cypher_query += f"[node in nodes(path) WHERE '{category}' IN node.category | node] AS trip_category{index},"
+                else:
+                    print(f"category{index}: ", category, "\n")
+                    cypher_query += f"[node in nodes(path) WHERE '{category}' IN node.category | node] AS trip_category{index}"
+            
+            # budget bolon type-aar filterdeh
+            cypher_query += """
+                              WHERE pathTotalTicketPrice + pathTotalGasPrice <= $budget
+                              AND size(trip_type) >= 1 
+                            """
+            # Category tus bur dor hayj 1 baih filter oruulah
+            for index, category in enumerate(categories):
+                cypher_query += f" AND size(trip_category{index}) >= 1"
+                              
+            # Ehleh tseg tugsgul tseg hoorondoo adil bus
+            cypher_query += """
+                              AND id(n) <> id(m) 
+                              RETURN DISTINCT nodes(path),relationships(path), pathTotalTicketPrice + pathTotalGasPrice AS total_cost, totalDistance
+                            """            
+
+            # Query parameters
+            parameters = {
+                "start_point": start_point,
+                "trip_type": trip_type,
+                "fuel_consumption": fuel_consumption,
+                "gas_price": gas_price,
+                "budget": budget,
+            }
+
+            print(cypher_query)
+
+            # DB-g querydeh
+            results = db.cypher_query(cypher_query, params=parameters)
+
+            return results
+
 
 class LocationRelationship:
     def __init__(self, distance, travel_time):

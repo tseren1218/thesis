@@ -8,7 +8,7 @@
         <div class="row">
             <div class="col-3 p-4" style="border: 1px solid gainsboro; border-radius: 5px;">
                 <h3 class="text-center">Таны шалгуур</h3>
-                <form hx-post="{% url 'core:new_trip' %}" hx-trigger="submit" hx-target="#results" hx-indicator="#loading-icon, #guide" class="mt-3">
+                <form id="user-requirements" hx-post="{% url 'core:new_trip' %}" hx-trigger="submit" hx-target="#results" hx-indicator="#loading-icon, #guide" class="mt-3">
                 {% csrf_token %}
                     <label for="type">Аяллын төрөл</label>
                     <select name="type" id="type" class="form-select mb-2">
@@ -53,11 +53,11 @@
                     </ul>
                     <label for="duration">Аяллын хугацаа</label>
                     <select name="duration" id="duration" class="form-select mb-2">
-                        <option value="1">1 өдрийн дотор</option>
+                        <option value="1-1">1 өдрийн дотор</option>
                         <option value="1-2">1-2 өдөр</option>
                         <option value="2-3">2-3 өдөр</option>
                         <option value="3-5">3-5 өдөр</option>
-                        <option value="5">5-с дээш өдөр</option>
+                        <option value="5-99">5-с дээш өдөр</option>
                     </select>
                     <label for="budget">Аяллын төсөв</label>
                     <select name="budget" id="budget" class="form-select mb-2">

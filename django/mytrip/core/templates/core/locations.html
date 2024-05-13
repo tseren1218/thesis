@@ -7,34 +7,49 @@
 {% load my_tags %}
     <div class="container mt-5">
 
-        <div class="row">
-            <div class="col">
-                {% if locations %}
-                    <div class="row">
-                        {% for location in locations %}
-                        <div class="col-4 mb-3">
-                            <div class="card">
-                                <div class="img-container" style="height: 200px !important;">
-                                    <img class="card-img-top"  style="width: 100%; height: 100%; object-fit: cover;" src="{{location.image_url}}" alt="{{location.name}}">
+        {% if locations %}
+            <div class="row">
+                {% for location in locations %}
+                    <div class="col-4 mb-3">
+                        <div class="card">
+                            <div class="img-container" style="height: 200px !important;">
+                                <img class="card-img-top"  style="width: 100%; height: 100%; object-fit: cover;" src="{{location.image_url}}" alt="{{location.name}}">
+                            </div>
+                            <div class="card-body">
+                                <b><p class="card-title text-center text-truncate">{{location.name}}</p></b>
+                                <p class="text-secondary">{{location|get_parent_province}} аймаг, {{ location|get_parent_soum }} сум</p>
+                                <div class="text-truncate-container" style="height: 120px !important;">
+                                    <p class="card-text">{{location.description}}</p>
                                 </div>
-                                <div class="card-body">
-                                    <b><p class="card-title text-center text-truncate">{{location.name}}</p></b>
-                                    <p class="text-secondary">{{location|get_parent_province}} аймаг, {{ location|get_parent_soum }} сум</p>
-                                    <div class="text-truncate-container" style="height: 120px !important;">
-                                        <p class="card-text">{{location.description}}</p>
-                                    </div>
-                                    <button class="btn btn-outline-success mt-3" style="width: 100%;">Дэлгэрэнгүй</button>
-                                </div>
+                                <button class="btn btn-outline-success mt-3" style="width: 100%;">Дэлгэрэнгүй</button>
                             </div>
                         </div>
-                    {% endfor %}
                     </div>
-                {% else %}
-                    <h1>No location available</h1>
-                {% endif %}
+                {% endfor %}
+            </div>
+                            
+            <div class="d-flex align-content-center justify-content-center">
+                <span class="current">
+                    Page {{ locations.number }} of {{ locations.paginator.num_pages }}.
+                </span>
+            </div>
+            <div class="d-flex align-content-center justify-content-center">
+                <ul class="pagination">
+                    <li class="page-item"><a class="page-link" href="?page=1">&laquo; Эхнийх</a></li>
+                    {% if locations.has_previous %}
+                        <li class="page-item"><a class="page-link" href="?page={{ locations.previous_page_number }}">Өмнөх</a></li>
+                    {% endif %}
+                    {% if locations.has_next %}
+                        <li class="page-item"><a class="page-link" href="?page={{ locations.next_page_number }}">Дараагийнх</a></li>
+                        <li class="page-item"><a class="page-link" href="?page={{ locations.paginator.num_pages }}">Сүүлийнх &raquo;</a></li>
+                    {% endif %}
+                </ul>
             </div>
 
-        </div>
+        {% else %}
+            <h1>No location available</h1>
+        {% endif %}
+
 
     </div>
 

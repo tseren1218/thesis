@@ -1,13 +1,11 @@
-from django.http import HttpResponse, HttpResponseRedirect, StreamingHttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse_lazy
 from core.forms import *
 from .models import *
 from django.conf import settings
-from neomodel import db
 from .my_utils import *
 from itertools import zip_longest
-from .templatetags import my_tags
 
 def index(request):
     return render(request, "core/index.html")
@@ -16,95 +14,50 @@ def new_trip(request):
 
     if request.method == 'POST':
 
-        trip_type = request.POST.get('type')
-        categories = request.POST.getlist('category_checkbox')
-        duration = request.POST.get('duration')
-        budget = int(request.POST.get('budget'))
-        vehicle = request.POST.get('vehicle')
-        fuel_consumption = my_tags.calculate_fuel_consumption(vehicle=vehicle)
-        gas_price = 2390
-        start_point = "Улаанбаатар (0 цэг)"
+        results = MyUtils.query_trip(request)
+        print("Query results: ", results)
 
-        if (trip_type and categories and duration and budget and vehicle):
-            
-            # Undsen query
-            cypher_query = """MATCH path = (n:Location{name:"Улаанбаатар (0 цэг)"})-[:CONNECTS_TO*1..3]-(m:Location) 
-                              WITH path,reduce(totalTicketPrice = 0, node in nodes(path) | totalTicketPrice + node.price) AS pathTotalTicketPrice, 
-                              reduce(totalDistance = 0, rel in relationships(path) | totalDistance + rel.distance) / 100 * $fuel_consumption * $gas_price * 2 AS pathTotalGasPrice,
-                              [node in nodes(path) WHERE node.type = $trip_type | node] AS trip_type, 
-                              """ 
-            
-            for index, category in enumerate(categories):
-                # Hamgiin suuliin category bish bol taslaltai bichigdene
-                if index != len(categories)-1:
-                    print(f"category{index}: ", category, "\n")
-                    cypher_query += f"[node in nodes(path) WHERE '{category}' IN node.category | node] AS trip_category{index},"
-                else:
-                    print(f"category{index}: ", category, "\n")
-                    cypher_query += f"[node in nodes(path) WHERE '{category}' IN node.category | node] AS trip_category{index}"
-            
-            cypher_query += """
-                              WHERE pathTotalTicketPrice + pathTotalGasPrice <= $budget
-                              AND size(trip_type) >= 1 
-                            """
-            
-            for index, category in enumerate(categories):
-                cypher_query += f" AND size(trip_category{index}) >= 1"
-                              
-                              
-            cypher_query += """
-                              AND id(n) <> id(m) 
-                              RETURN nodes(path),relationships(path), pathTotalTicketPrice + pathTotalGasPrice AS total_cost
-                            """            
+        # Tohiroh aylal oldoogui bol results:False damjuulna
+        if not results[0]:
+            return render(request, 'core/partials/recommendation_results.html', {'alert_message': 'Уучлаарай, тохирох аяллын маршрут олдсонгүй!'})
+        
+        trips = results[0]
 
-            # Query parameters
-            parameters = {
-                "start_point": start_point,
-                "trip_type": trip_type,
-                "fuel_consumption": fuel_consumption,
-                "gas_price": gas_price,
-                "budget": budget,
-            }
+        # Template ruu shideh buh aylluudiin datag aguulah list-uud 
+        all_locations = []
+        all_relationships = []
+        all_costs = []
+        all_distances = []
 
-            print(cypher_query)
+        for trip in trips:
+            # Extract trip data
+            locations = [Location.inflate(raw_location) for raw_location in trip[0]]
+            relationships = [MyUtils.dereference_relationship_from_raw(raw_relationship=raw_relationship) for raw_relationship in trip[1]]
+            # Append to lists
+            all_locations.append(locations)
+            all_relationships.append(relationships)
+            all_costs.append(trip[2])
+            all_distances.append(trip[3])
+            print("ITERATION COMPLETE")
 
-            # DB-g querydeh
-            results = db.cypher_query(cypher_query, params=parameters)
+        # pagination
+        # current_page = request.POST.get('page', 1)
+        # print(current_page)
+        # paginated_locations = MyUtils.paginate(all_locations, 4, current_page)
+        # paginated_relationships = MyUtils.paginate(all_relationships, 4, current_page)
+        
+        trips_data = zip_longest(all_locations, all_relationships)
+        print('ZIPPING COMPLETE')
 
-            # Tohiroh aylal oldoogui bol results:False damjuulna
-            if not results[0]:
-                return render(request, 'core/partials/recommendation_results.html', {'alert_message': 'Уучлаарай, тохирох аяллын маршрут олдсонгүй!'})
-            
-            trips = results[0]
-
-            # Template ruu shideh buh aylluudiin datag aguulah list-uud 
-            all_locations = []
-            all_relationships = []
-            all_prices = []
-
-            print
-            for trip in trips:
-                # Extract trip data
-                locations = [MyUtils.dereference_location_from_raw(raw_location=raw_location) for raw_location in trip[0]]
-                relationships = [MyUtils.dereference_relationship_from_raw(raw_relationship=raw_relationship) for raw_relationship in trip[1]]
-                price = int(trip[2])
-
-                # Append to lists
-                all_locations.append(locations)
-                all_relationships.append(relationships)
-                all_prices.append([price])
-
-                print("ONE ITERATION COMPLETE")
-
-            trips_data = zip_longest(all_locations, all_relationships)
-            
-            return render(request, 'core/partials/recommendation_results.html', {'trips_data': trips_data, 'all_prices': all_prices, 'vehicle': vehicle})
+        return render(request, 'core/partials/recommendation_results.html', {'trips_data': trips_data, 'all_costs':all_costs, 'all_distances':all_distances, 'vehicle': request.POST.get('vehicle')})
     else:
         return render(request, 'core/new_trip.html', {'alert_message': 'Та аяллын шалгуураа оруулна уу'})
 
 def get_locations(request):
-    locations = Location.nodes.exclude(name="Улаанбаатар (0 цэг)")
-    return render(request, 'core/locations.html', {'locations': locations})
+    locations = Location.nodes.all()
+    current_page = request.GET.get('page', 1)
+    page_data = MyUtils.paginate(locations, 6, current_page)
+    return render(request, 'core/locations.html', {'locations': page_data})
 
 def new_location(request):
     if request.method == 'POST':
@@ -115,6 +68,8 @@ def new_location(request):
 
             # zurag hadgalah
             image_key = MyUtils.upload_location_image_to_s3(request.FILES['image_url'])
+
+            # erunhii data hadgalah
             location = location_form.save(commit=False)
             location.image_url = f"https://{settings.AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com/{image_key}"
             location.name=location_form.cleaned_data['name']

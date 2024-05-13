@@ -1,5 +1,5 @@
 {% load my_tags %}
-    {% if trips_data and all_prices %}
+    {% if trips_data %}
 
     <div class="card mb-3 mt-3 p-0 bg-light">
         <div class="card-body p-2 d-flex justify-content-between align-content-center">
@@ -34,7 +34,7 @@
                 <div id="collapse{{forloop.counter}}" class="collapse" aria-labelledby="heading{{forloop.counter}}" data-parent="#accordion">
                     <div class="card-body">
                         {% for location in locations %}
-                            {% if location.name != "Улаанбаатар (0 цэг)" %}
+                            
                                 <div class="card mb-3 border-2 border-{% if location.type == 'Энгийн' %}success{% elif location.type == 'Явган' %}primary{% else %}danger{% endif %}">
                                     <div class="row g-0">
                                         <div class="col-md-4">
@@ -67,19 +67,7 @@
                                         </div>
                                     </div>
                                 {% endif %}
-                            {% else %}
-                                <div class="card mb-3">
-                                    <div class="card-body">
-                                        <h5 class="card-title">1. Эхлэх цэг: Улаанбаатар</h5>
-                                    </div>
-                                </div>
-                                <div class="card mb-3 bg-light">
-                                    <div class="card-body">
-                                        <p class="card-text"><i class="fas fa-car"></i> Замын урт: {{relationships|get_relationship_distance:forloop.counter0}} км</p>
-                                        <p class="card-text"><i class="bi bi-clock-fill"></i> Туулах хугацаа: {{relationships|get_relationship_travel_time:forloop.counter0}} минут</p>
-                                    </div>
-                                </div>
-                            {% endif %}
+                            
                         {% endfor %}
                         <div class="card mb-3 bg-light">
                             <div class="card-header">
@@ -88,7 +76,7 @@
                             <div class="card-body">
                                 <div class="card-text">
                                     <p><strong>Аяллын нийт байршил:</strong> {{locations|length_real}}</p>
-                                    <p><strong>Аяллын нийт урт:</strong> {{relationships|sum_relationship_distance}} км <i>/нэг талдаа/</i></p>
+                                    <p><strong>Аяллын нийт урт:</strong> {{all_distances|total_distance:forloop.counter0}} км <i>/нэг талдаа/</i></p>
                                     <p><strong>Аяллын нийт хугацаа:</strong> ~{{relationships|calculate_trip_duration}} өдөр <i>/нэг талдаа/</i></p>
                                     <p><strong>Аяллын нийт өртөг:</strong></p>
                                     <ul>
@@ -102,9 +90,11 @@
                 </div>
             </div>
 
-           
-    
         {% endfor %}
+
+        {% if pagination.has_next %}
+            <button onclick="fetch_next('{{pagination.next_page_number}}')">Дараагийнх</button>
+        {% endif %}
 
     </div>
     {% endif %}
