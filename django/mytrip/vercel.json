@@ -23,6 +23,11 @@
         "src": "/(.*)",
         "dest": "mytrip/wsgi.py"
       }
-    ]
+    ],
+    "functions": {
+      "core/views.py": {
+        "maxDuration": 60
+      }
+    }
 
   }
