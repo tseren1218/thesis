@@ -97,7 +97,6 @@ class MyUtils:
 
             return results
 
-
 class LocationRelationship:
     def __init__(self, distance, travel_time):
         self.distance = distance
