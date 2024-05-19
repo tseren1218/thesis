@@ -41,7 +41,6 @@ class MyUtils:
         gas_price = 2390
         start_point = "Улаанбаатар (0 цэг)"
         
-
         if (trip_type and categories and duration and budget and vehicle):
             
             nth_query = int(nth_query) * 5
