@@ -25,9 +25,8 @@
       }
     ],
     "functions": {
-      "core/views.py": {
-        "maxDuration": 60
+      "core/*.py": {
+      "maxDuration": 60
       }
-    }
 
   }
