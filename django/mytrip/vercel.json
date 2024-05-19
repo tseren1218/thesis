@@ -25,7 +25,7 @@
       }
     ],
     "functions": {
-      "core/*.py": {
+      "mytrip/wsgi.py": {
         "maxDuration": 60
       }
     }
