@@ -19,7 +19,6 @@ def new_trip(request):
         nth_query = 0 if nth_query == None else int(nth_query)
         results = MyUtils.query_trip(request, nth_query)
         has_next_result = MyUtils.query_trip(request, nth_query + 1)
-        print("Query results: ", results)
 
         # Tohiroh aylal oldoogui bol results:False damjuulna
         if not results[0]:
@@ -42,10 +41,8 @@ def new_trip(request):
             all_relationships.append(relationships)
             all_costs.append(trip[2])
             all_distances.append(trip[3])
-            print("ITERATION COMPLETE")
         
         trips_data = zip_longest(all_locations, all_relationships)
-        print('ZIPPING COMPLETE')
 
         return render(request, 'core/partials/recommendation_results.html', {'trips_data': trips_data, 'all_costs':all_costs, 'all_distances':all_distances, 'vehicle': request.POST.get('vehicle'), 'has_next_result': has_next_result, 'nth_query': nth_query * 5})
     else:
@@ -123,7 +120,6 @@ def new_location(request):
                         relationship_from.save()
             return HttpResponseRedirect(reverse_lazy('core:index'))
         else:
-            print(location_form.errors)
             return HttpResponse(400)
     else:
         location_form = LocationForm()
@@ -142,7 +138,6 @@ def soums(request):
     
 def connected_locations_properties(request):
     connected_location_uids = request.POST.getlist('checkbox_option')
-    print(connected_location_uids)
     connected_locations = []
     for connected_location_uid in connected_location_uids:
         connected_location = Location.nodes.get(uid=connected_location_uid)
