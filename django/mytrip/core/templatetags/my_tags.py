@@ -75,6 +75,17 @@ def get_parent_province(location):
 def get_parent_province(location):
     return location.soum.single().province.single()
 
+@register.filter
+def average_rating(comments):
+    if not comments: 
+        return 0
+    all_stars = [comment.stars for comment in comments]
+    return round(sum(all_stars) / len(all_stars), 1)
+
+@register.filter
+def calculate_total_cost(relationships_array, vehicle, locations_array):
+    return calculate_total_gas_cost(relationships_array, vehicle) + calculate_total_ticket_cost(locations_array)
+
 def calculate_fuel_consumption(vehicle):
     fuel_consumption = 0
     if(vehicle == 'prius'):

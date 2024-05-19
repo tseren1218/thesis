@@ -31,7 +31,7 @@ class MyUtils:
         paginator = Paginator(data, page_size)
         return paginator.get_page(page_number)
 
-    def query_trip(request):
+    def query_trip(request, nth_query):
         trip_type = request.POST.get('type')
         categories = request.POST.getlist('category_checkbox')
         duration = request.POST.get('duration')
@@ -40,9 +40,11 @@ class MyUtils:
         fuel_consumption = my_tags.calculate_fuel_consumption(vehicle=vehicle)
         gas_price = 2390
         start_point = "Улаанбаатар (0 цэг)"
+        
 
         if (trip_type and categories and duration and budget and vehicle):
             
+            nth_query = int(nth_query) * 5
             # Undsen query
             cypher_query = """MATCH path = (n:Location{name:"Улаанбаатар (0 цэг)"})-[:CONNECTS_TO*1..3]-(m:Location) 
                               WITH 
@@ -75,6 +77,8 @@ class MyUtils:
             cypher_query += """
                               AND id(n) <> id(m) 
                               RETURN DISTINCT nodes(path),relationships(path), pathTotalTicketPrice + pathTotalGasPrice AS total_cost, totalDistance
+                              SKIP $skip
+                              LIMIT 5
                             """            
 
             # Query parameters
@@ -84,6 +88,7 @@ class MyUtils:
                 "fuel_consumption": fuel_consumption,
                 "gas_price": gas_price,
                 "budget": budget,
+                "skip": nth_query
             }
 
             print(cypher_query)

@@ -1,5 +1,5 @@
 from django import forms
-from core.models import Location
+from core.models import Location, Comment
 
 class LocationForm(forms.ModelForm):
     class Meta:
@@ -106,3 +106,10 @@ class RequirementForm(forms.Form):
     duration = forms.ChoiceField(choices=DURATION_CHOICES, label="Аяллын хугацаа", required=True)
     budget = forms.ChoiceField(choices=BUDGET_CHOICES, label="Аяллын төсөв", required=True)
     car = forms.ChoiceField(choices=CAR_CHOICES, label="Автомашин", required=True)
+
+class CommentForm(forms.ModelForm):
+    class Meta:
+        model = Comment
+        exclude = ['uid', 'commenter_id', 'location', 'created_at']
+    body = forms.CharField(widget=forms.Textarea, label='')
+    stars = forms.IntegerField(min_value=0, max_value=5, label='Үнэлгээ')

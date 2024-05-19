@@ -8,5 +8,6 @@ urlpatterns = [
     path("new_location/", views.new_location, name="new_location"),
     path('soums/', views.soums, name='soums'),
     path('connected_locations_properties/', views.connected_locations_properties, name="connected_locations_properties"),
-    path('new_trip/', views.new_trip, name='new_trip')
+    path('new_trip/', views.new_trip, name='new_trip'),
+    path('locations/<int:pk>/', views.location_detail, name='location_detail'),
 ]

@@ -1,0 +1,134 @@
+{% extends 'base.html' %}
+
+{% block title %}Home{% endblock %}
+{% load static %}
+{% block content %}
+
+{% load my_tags %}
+
+    <div class="container mt-5">
+
+        <div class="card mb-3 border-2 border-{% if location.type == 'Энгийн' %}success{% elif location.type == 'Явган' %}primary{% else %}danger{% endif %}">
+            <div class="row g-0">
+                <div class="col-md-4">
+                    <img src="{{location.image_url}}" alt="{{location.name}}" class="img-fluid rounded-start" style="width: 100%; height: 100%; object-fit: cover;">
+                </div>
+                <div class="col-md-8">
+                    <div class="card-body h-100">
+                        <div class="d-flex flex-column justify-content-between h-100">
+                            <div class="d-flex justify-content-between">
+                                <h5 class="card-title">{{location.name}}</h5>
+                                <div class="d-flex justify-content-between align-items-center pt-2">
+                                    <div class="d-flex align-items-center">
+                                    <p class="me-0 mb-0">{{comments|average_rating}}/</p>
+                                    <p class="mb-0">5<i class="bi bi-star ms-1"></i></p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-text text-truncate-container">
+                                <p class="card-text mb-0">{{location.description}}</p>
+                            </div>
+                            <p class="mb-0 mt-3"><span class="fw-bold">Байршил: </span> <span class="text-secondary">{{location|get_parent_province}} аймаг, {{location|get_parent_soum}} сум</span></p>
+                            <p class="mb-0"><span class="fw-bold">Төрөл: </span> <span class="text-{% if location.type == 'Энгийн' %}success{% elif location.type == 'Явган' %}primary{% else %}danger{% endif %}">{{location.type}}</span></p>
+                            <p class="mb-0"><span class="fw-bold">Категори: </span> 
+                                {% for category in location.category %}
+                                    <span class="text-secondary">{{category}}</span>
+                                {% endfor %}
+                            </p>
+                        </div>
+                    </div>
+                </div>                                 
+            </div>
+        </div>
+
+        
+
+
+        <div class="row">
+            
+                       
+            {% if comments %}
+            <div class="col-6">
+            <h5 class="mt-5">Сэтгэгдлүүд</h5>
+                <section style="background-color: #fff;">
+                    <div class="container my-5 py-3 text-body mt-0">
+                        <div class="row d-flex">
+                            {% for comment in comments %}
+                                <div>
+                                <div class="d-flex flex-start mb-4">
+                                    <img class="rounded-circle shadow-1-strong me-3"
+                                    src="https://mytrip-media.s3.ap-northeast-2.amazonaws.com/your-folder/unregistered_user.jpg" alt="avatar" width="65"
+                                    height="65" />
+                                    <div class="card w-100">
+                                    <div class="card-body pt-2 px-4">
+                                        <div class="">
+                                        <p class="fw-bold fs-5">Зочин</p>
+                                        <p class="small">{{ comment.created_at|timesince }}</p>
+                                        <p>
+                                            {{ comment.body }}
+                                        </p>
+                    
+                                        <div class="d-flex justify-content-between align-items-center pt-2">
+                                            <div class="d-flex align-items-center">
+                                            <p class="me-0 mb-0">{{comment.stars}}/</p>
+                                            <p class="mb-0">5<i class="bi bi-star ms-1"></i></p>
+                                            </div>
+                                        </div>
+                                        </div>
+                                    </div>
+                                    </div>
+                                </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </section>
+            </div>
+            {% endif %}
+        
+            <div class="col-6">
+                <h5 class="mt-5">Сэтгэгдэл үлдээх</h5>
+                <div class="py-3">
+                <div class="card">
+
+                    <div class="card-body">
+                        <form method="POST" hx-post="{% url 'core:location_detail' location.custom_id %}" hx-target="body">
+                            {% csrf_token %}
+                            <p>{{comment_form.body}}</p>
+                            <input type="hidden" name="location_id" value="{{location.custom_id}}">
+                            <div class="submit-button d-flex justify-content-between align-content-center">
+                                <label for="stars" class="me-2">Үнэлгээ</label>
+                                <p>{{comment_form.stars}}</p>
+                                <button type="submit" class="btn btn-primary">Нийтлэх</button>
+                            </div>
+                        </form>
+                      
+                    </div>
+                </div>
+                </div>
+            </div>
+
+        
+            </div>
+        </div>
+        
+    <style>
+        form {
+            width: 100%;
+        }
+
+        form p {
+            width: 100%;
+        }
+
+        textarea {
+            width: 100%;
+            height: 100px;
+            padding: 5px;
+        }
+        .card p {
+            margin-bottom: 0;
+        }
+    </style>
+
+{% endblock %}

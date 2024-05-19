@@ -1,6 +1,7 @@
+from datetime import datetime
 from django.http import HttpResponse, HttpResponseRedirect
-from django.shortcuts import render
-from django.urls import reverse_lazy
+from django.shortcuts import redirect, render
+from django.urls import reverse, reverse_lazy
 from core.forms import *
 from .models import *
 from django.conf import settings
@@ -14,7 +15,10 @@ def new_trip(request):
 
     if request.method == 'POST':
 
-        results = MyUtils.query_trip(request)
+        nth_query = request.headers.get('nthQuery')
+        nth_query = 0 if nth_query == None else int(nth_query)
+        results = MyUtils.query_trip(request, nth_query)
+        has_next_result = MyUtils.query_trip(request, nth_query + 1)
         print("Query results: ", results)
 
         # Tohiroh aylal oldoogui bol results:False damjuulna
@@ -39,17 +43,11 @@ def new_trip(request):
             all_costs.append(trip[2])
             all_distances.append(trip[3])
             print("ITERATION COMPLETE")
-
-        # pagination
-        # current_page = request.POST.get('page', 1)
-        # print(current_page)
-        # paginated_locations = MyUtils.paginate(all_locations, 4, current_page)
-        # paginated_relationships = MyUtils.paginate(all_relationships, 4, current_page)
         
         trips_data = zip_longest(all_locations, all_relationships)
         print('ZIPPING COMPLETE')
 
-        return render(request, 'core/partials/recommendation_results.html', {'trips_data': trips_data, 'all_costs':all_costs, 'all_distances':all_distances, 'vehicle': request.POST.get('vehicle')})
+        return render(request, 'core/partials/recommendation_results.html', {'trips_data': trips_data, 'all_costs':all_costs, 'all_distances':all_distances, 'vehicle': request.POST.get('vehicle'), 'has_next_result': has_next_result, 'nth_query': nth_query * 5})
     else:
         return render(request, 'core/new_trip.html', {'alert_message': 'Та аяллын шалгуураа оруулна уу'})
 
@@ -58,6 +56,22 @@ def get_locations(request):
     current_page = request.GET.get('page', 1)
     page_data = MyUtils.paginate(locations, 6, current_page)
     return render(request, 'core/locations.html', {'locations': page_data})
+
+def location_detail(request, pk):
+    location = Location.nodes.get_or_none(custom_id=pk)
+    if request.method == 'POST':
+        comment_form = CommentForm(request.POST)
+        if comment_form.is_valid():
+            comment = comment_form.save()
+            comment.location.connect(location)
+            location.comments.connect(comment)
+            comment.created_at = datetime.now()
+            redirect_url = reverse('core:location_detail', kwargs={'pk': pk})
+            return redirect(redirect_url)
+            
+    else:
+        comment_form = CommentForm()
+    return render(request, 'core/location_detail.html', {'location': location, 'comments': location.comments.order_by('-created_at'), 'comment_form': comment_form})
 
 def new_location(request):
     if request.method == 'POST':
